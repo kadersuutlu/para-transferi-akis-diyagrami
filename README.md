@@ -382,3 +382,33 @@ flowchart TB
 | T30 | Kullanıcı, işlemde hata olur. | 30. Banka sistemi → Hata → Para çıkmamış | "Para çıkmamış, limit serbest bırakılır" |
 | T31 | Kullanıcı, iade tamamlanmış. | 31. İade tamamlandı → Limit geri yüklenir | Kullanılan limit geri yüklenir |
 | T32 | Kullanıcı, iade tamamlanmamış. | 32. İade tamamlanmamış → Düzeltme bekleniyor | Düzeltme bekleniyor, operasyon ekibi takip eder |
+
+### 6. Sınır Değer Testleri
+
+Burada kullanılan sayılar örnektir. Önemli olan sınırın kendisini ve hemen altındaki ve üstündeki değerleri test etmektir; gerçek değerler farklıysa bu üç noktayı yeni değerlere göre seçin.
+
+| Test | Açıklama | Test adımı | Beklenen sonuç |
+| --- | --- | --- | --- |
+| T53 | IBAN 25 karakterdir (alt sınırın altı). | 53. IBAN girilir (25 karakter) → Format kontrolü | "IBAN geçersiz" mesajı gösterilir |
+| T54 | IBAN 26 karakterdir ama mod 97 kontrolünü geçmez. | 54. IBAN girilir (26 karakter, mod 97 hatalı) → isValid = false | "IBAN geçersiz" mesajı gösterilir, sistem alıcıyı sorgulamaz |
+| T55 | IBAN 27 karakterdir (üst sınırın üstü). | 55. IBAN girilir (27 karakter) → Format kontrolü | "IBAN geçersiz" mesajı gösterilir |
+| T56 | Tutar ve masraf toplamı bakiyenin 0,01 TL altındadır. | 56. Tutar + masraf = bakiye − 0,01 TL → Bakiye kontrolü | İşlem geçer, özet ekranına geçilir |
+| T57 | Tutar ve masraf toplamı bakiyeye tam eşittir. | 57. Tutar + masraf = bakiye → Bakiye kontrolü | İşlem geçer, özet ekranına geçilir |
+| T58 | Tutar ve masraf toplamı bakiyenin 0,01 TL üstündedir. | 58. Tutar + masraf = bakiye + 0,01 TL → Bakiye kontrolü | "Bakiye yetersiz, tutar değiştirilmeli" mesajı gösterilir |
+| T59 | Tutar, tek işlem limitinin 0,01 TL altındadır. | 59. Tutar = tek işlem limiti − 0,01 TL → Limit kontrolü | İşlem geçer, özet ekranına geçilir |
+| T60 | Tutar, tek işlem limitine tam eşittir. | 60. Tutar = tek işlem limiti → Limit kontrolü | İşlem geçer, özet ekranına geçilir |
+| T61 | Tutar, tek işlem limitinin 0,01 TL üstündedir. | 61. Tutar = tek işlem limiti + 0,01 TL → Limit kontrolü | "Tek işlem limiti aşılıyor, tutar değiştirilmeli" mesajı gösterilir |
+| T62 | Tutar, günlük kalan limitin 0,01 TL altındadır. | 62. Tutar = günlük kalan limit − 0,01 TL → Toplam limit kontrolü | İşlem geçer, özet ekranına geçilir |
+| T63 | Tutar, günlük kalan limite tam eşittir. | 63. Tutar = günlük kalan limit → Toplam limit kontrolü | İşlem geçer, özet ekranına geçilir |
+| T64 | Tutar, günlük kalan limitin 0,01 TL üstündedir. | 64. Tutar = günlük kalan limit + 0,01 TL → Toplam limit kontrolü | "Toplam limit aşılıyor, kalan limit gösterilir" mesajı gösterilir |
+| T65 | Günlük limit, sıfırlanma saatinden bir dakika önce (23:59) dolu. | 65. Saat 23:59, günlük limit dolu → Transfer denenir | "Toplam limit aşılıyor, kalan limit gösterilir" mesajı gösterilir |
+| T66 | Günlük limit, sıfırlanma saatinde (00:00) yenilenir. | 66. Saat 00:00, yeni gün → Transfer denenir | Günlük limit yenilenmiş olur, işlem geçer |
+| T67 | Günlük limit, sıfırlanma saatinden bir dakika sonra (00:01) yenilenmiş durumdadır. | 67. Saat 00:01, yeni gün → Transfer denenir | Günlük limit yenilenmiş olur, işlem geçer |
+| T68 | EFT, kapanış saatinden bir dakika önce (16:59) denenir. | 68. Saat 16:59, EFT servisi açık → EFT seçilir | EFT ile gönderilir |
+| T69 | EFT, kapanış saatinden bir dakika sonra (17:01) denenir. | 69. Saat 17:01, EFT servisi kapalı → EFT seçilir | "EFT saatleri dışında, uygun bir zamanda tekrar denenmeli" mesajı gösterilir |
+| T70 | Onay süresinden bir saniye önce (T−1) imza verilir. | 70. İmza adımı, süre = T−1 → İmza gönderilir | İmza kabul edilir, işlem devam eder |
+| T71 | Onay süresinin tam sınırında (T) imza verilir. | 71. İmza adımı, süre = T → İmza gönderilir | İmza kabul edilir, işlem devam eder |
+| T72 | Onay süresinden bir saniye sonra (T+1) imza verilir. | 72. İmza adımı, süre = T+1 → İmza gönderilir | "Onay süresi doldu, özet yeniden gösterilir" mesajı gösterilir |
+| T73 | Biyometrik ya da PIN hatası, deneme hakkının bir eksiğinde (n−1) yapılır. | 73. Hatalı deneme sayısı = n−1 → Yeni deneme yapılır | İmza adımı tekrar açılır, işlem devam edebilir |
+| T74 | Biyometrik ya da PIN hatası, deneme hakkının tam sınırında (n) yapılır. | 74. Hatalı deneme sayısı = n → Yeni deneme yapılır | Son deneme hakkı kullanılır, imza adımı açık kalır |
+| T75 | Biyometrik ya da PIN hatası, deneme hakkının bir fazlasında (n+1) yapılır. | 75. Hatalı deneme sayısı = n+1 → Yeni deneme yapılır | "İmza yöntemi geçici olarak kilitlendi" mesajı gösterilir, işlem gönderilmez |
