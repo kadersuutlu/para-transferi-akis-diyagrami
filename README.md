@@ -1,6 +1,6 @@
 # Para Transferi Akış Diyagramı
 
-Bir para transferi akışının beş parçaya bölünmüş Mermaid diyagramı ve bu akıştan türetilen 52 test senaryosu. Akış genel bir modeldir; belirli bir bankanın sistemini yansıtmaz. Limit, süre ve deneme sayıları örnek varsayımdır.
+Bir para transferi akışının beş parçaya bölünmüş Mermaid diyagramı ve bu akıştan türetilen 75 test senaryosu. Akış genel bir modeldir; belirli bir bankanın sistemini yansıtmaz. Limit, süre ve deneme sayıları örnek varsayımdır.
 
 Bu çalışmanın anlatıldığı yazı: [Para Transferi Akışını Test Uzmanı Gözüyle Okumak](https://medium.com/@sutlukader/para-transferi-ak%C4%B1%C5%9F%C4%B1n%C4%B1-qa-g%C3%B6z%C3%BCyle-okumak-9db94ea9739c)
 
